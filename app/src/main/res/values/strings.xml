@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">BluetoothTest</string>
+    <string name="connectButton">接続</string>
+    <string name="pairCheckButton">ペアチェック</string>
+    <string name="mainActivityTitle">Bluetooth Test</string>
+    <string name="workText">Dummy Text</string>
+    <string name="releaseButton">解除</string>
 </resources>

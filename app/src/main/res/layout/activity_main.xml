@@ -10,7 +10,7 @@
         android:id="@+id/textView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Bluetooth Test"
+        android:text="@string/mainActivityTitle"
         android:textAlignment="center"
         android:textSize="34sp"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -24,20 +24,48 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:text="ペアチェック"
+        android:text="@string/pairCheckButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView" />
 
-    <TextView
-        android:id="@+id/serialText"
-        android:layout_width="0dp"
+    <Button
+        android:id="@+id/connectBt"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Dummy Text"
-        android:textSize="34sp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/connectButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/checkBt" />
+
+    <Button
+        android:id="@+id/releaseBt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="@string/releaseButton"
+        app:layout_constraintBaseline_toBaselineOf="@+id/connectBt"
+        app:layout_constraintStart_toEndOf="@+id/connectBt" />
+
+    <ScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/checkBt" />
+        app:layout_constraintTop_toBottomOf="@+id/connectBt">
+
+        <TextView
+            android:id="@+id/serialText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/workText"
+            android:textSize="34sp" />
+    </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
