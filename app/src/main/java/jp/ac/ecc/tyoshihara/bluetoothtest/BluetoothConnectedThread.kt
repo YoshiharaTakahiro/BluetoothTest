@@ -21,23 +21,26 @@ internal class BluetoothConnectedThread(mmSocket: BluetoothSocket, activity: App
     private var running = true
 
     override fun run() {
-        // Keep listening to the InputStream until an exception occurs.
+        // 中止命令が呼び出されるまで処理を継続させる
         while (running) {
             mmInStream.read(mmBuffer)
 
-            activity.runOnUiThread {
-                val serialText = activity.findViewById<TextView>(R.id.serialText)
-                val wkCharas = Character.toChars(mmBuffer[0].toInt())
-                val wkText = serialText.text.toString() + wkCharas[0]
-                serialText.text = wkText
-            }
+            if(activity.localClassName.equals("MainActivity")) {
+                val mainActivity : MainActivity = activity as MainActivity
+                mainActivity.runOnUiThread {
+                    // 受信したデータを画面に表示させる
+                    val wkCharas = Character.toChars(mmBuffer[0].toInt()) //文字コードから文字に変換
+                    val wkText = mainActivity.serialText.text.toString() + wkCharas[0]
+                    mainActivity.serialText.text = wkText
+                }
+           }
         }
     }
 
-    // Call this method from the main activity to shut down the connection.
+    // 通信中止メソッド
     fun cancel() {
         try {
-            // 無限ループを終了させてrunメソッドを終了させてスレッドを完結させる
+            // 無限ループを抜け出しスレッドを完了させる
             running = false
         } catch (e: IOException) {
             Log.e(TAG, "Could not close the connect socket", e)

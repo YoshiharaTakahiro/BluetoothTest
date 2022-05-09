@@ -17,10 +17,9 @@ class MainActivity : AppCompatActivity() {
     val TAG = "MainActivity"
     val REQUEST_ENABLE_BT = 100
 
-    lateinit var bluetoothAdapter : BluetoothAdapter
-    lateinit var device: BluetoothDevice
-
-    private lateinit var BTConnectThred: BluetoothConnectThread
+    private var bluetoothAdapter : BluetoothAdapter? = null
+    private var device: BluetoothDevice? = null
+    private var BTConnectThred: BluetoothConnectThread? = null
 
     lateinit var serialText : TextView
 
@@ -31,12 +30,12 @@ class MainActivity : AppCompatActivity() {
 
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
         if (bluetoothAdapter == null) {
-            // Device doesn't support Bluetooth
+            // デバイスがBluetoothに対応していない場合は以降の処理は行わない
             Toast.makeText(this, "この端末はBluetoothに対応していません", Toast.LENGTH_LONG).show()
             return
         }
 
-        if (!bluetoothAdapter.isEnabled) {
+        if (!bluetoothAdapter!!.isEnabled) {
             val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
             startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT)
         }
@@ -51,8 +50,8 @@ class MainActivity : AppCompatActivity() {
                 // ペア済のデバイスを設定
                 this.device = device
 
-                val deviceName = device.name
-                val deviceHardwareAddress = device.address // MAC address
+                val deviceName = device.name // デバイス名
+                val deviceHardwareAddress = device.address // MACアドレス
                 Log.i(TAG, "deviceName:"+deviceName)
                 Log.i(TAG, "macAddress:"+deviceHardwareAddress)
                 Log.i(TAG, "uudi:"+device.uuids[0].uuid.toString())
@@ -63,33 +62,38 @@ class MainActivity : AppCompatActivity() {
         val connectBt = findViewById<Button>(R.id.connectBt)
         connectBt.setOnClickListener {
 
-            if(::device.isInitialized){
-                // 接続開始
+            device?.also{
                 serialText.text = ""
-                Toast.makeText(this, "ペアリング済のデバイス("+device.name+")に接続しました", Toast.LENGTH_LONG).show()
-                connectBt.isEnabled = false
-                BTConnectThred = BluetoothConnectThread(device, this)
-                BTConnectThred.start()
-            }else{
-                Toast.makeText(this, "ペアリングチェックを先にしてください。", Toast.LENGTH_LONG).show()
-            }
+                Toast.makeText(this, "ペアリング済のデバイス("+it.name+")に接続しました", Toast.LENGTH_LONG).show()
+                connectBt.isEnabled = false // 二重接続を防ぐためボタンを無効化
+
+                // Bluetooth接続を行うスレッドを開始
+                BTConnectThred = BluetoothConnectThread(it, this)
+                BTConnectThred?.also {
+                    it.start()
+                }
+            }?: Toast.makeText(this, "ペアリングチェックを先にしてください。", Toast.LENGTH_SHORT).show()
         }
 
         val releaseBt = findViewById<Button>(R.id.releaseBt)
         releaseBt.setOnClickListener {
-            if(::BTConnectThred.isInitialized){
-                // 接続解除
-                Toast.makeText(this, "デバイス(" + device.name + ")に接続を終了します", Toast.LENGTH_LONG).show()
-                connectBt.isEnabled = true
-                BTConnectThred.cancel()
-            }else{
-                Toast.makeText(this, "接続状態ではありません", Toast.LENGTH_LONG).show()
-            }
+
+            BTConnectThred?.also {
+                it.release()
+                connectBt.isEnabled = true // 接続ボタンを有効化に戻す
+                Toast.makeText(this, "デバイス(" + device?.name + ")の接続を終了します", Toast.LENGTH_LONG).show()
+            }?: Toast.makeText(this, "接続状態ではありません", Toast.LENGTH_LONG).show()
+
+            BTConnectThred = null
         }
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        BTConnectThred.cancel()
+        BTConnectThred?.also {
+            it.release()
+        }
+        BTConnectThred = null
+        device = null
     }
 }

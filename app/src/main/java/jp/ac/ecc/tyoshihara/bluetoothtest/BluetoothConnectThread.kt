@@ -15,24 +15,26 @@ internal class BluetoothConnectThread(device: BluetoothDevice, activity: AppComp
 
     lateinit var BTConnectedThread : BluetoothConnectedThread
     private val mmSocket: BluetoothSocket? by lazy(LazyThreadSafetyMode.NONE) {
+        // SPP(Serial Port Profile)のUUIDをセットしてシリアル通信を行う
         device.createRfcommSocketToServiceRecord(device.uuids[0].uuid)
     }
 
     private val activity = activity
 
     override fun run() {
-        // Cancel discovery because it otherwise slows down the connection.
+        // デバイスの検出処理をキャンセルする(このタイミングでは接続済みのため）
         val bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
         bluetoothAdapter?.cancelDiscovery()
 
+        // Bluetooth通信を行うスレッドを開始
         mmSocket!!.connect()
         BTConnectedThread = BluetoothConnectedThread(mmSocket!!, activity)
         BTConnectedThread.start()
 
     }
 
-    // Closes the client socket and causes the thread to finish.
-    fun cancel() {
+    // Bluetooth接続解除メソッド
+    fun release() {
         try {
             BTConnectedThread.cancel()
             while (true){
