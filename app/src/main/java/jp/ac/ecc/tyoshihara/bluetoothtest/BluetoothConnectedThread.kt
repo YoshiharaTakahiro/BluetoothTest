@@ -1,14 +1,13 @@
 package jp.ac.ecc.tyoshihara.bluetoothtest
 
 import android.bluetooth.BluetoothSocket
+import android.os.Handler
 import android.util.Log
-import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
 import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
 
-internal class BluetoothConnectedThread(mmSocket: BluetoothSocket, activity: AppCompatActivity) : Thread() {
+internal class BluetoothConnectedThread(mmSocket: BluetoothSocket, handler: Handler) : Thread() {
 
     val TAG = "BluetoothConnectedThread"
 
@@ -16,7 +15,7 @@ internal class BluetoothConnectedThread(mmSocket: BluetoothSocket, activity: App
     // private val mmOutStream: OutputStream = mmSocket.outputStream
     private val mmBuffer: ByteArray = ByteArray(1024) // mmBuffer store for the stream
 
-    private val activity = activity
+    private val handler = handler
 
     private var running = true
 
@@ -25,15 +24,10 @@ internal class BluetoothConnectedThread(mmSocket: BluetoothSocket, activity: App
         while (running) {
             mmInStream.read(mmBuffer)
 
-            if(activity.localClassName.equals("MainActivity")) {
-                val mainActivity : MainActivity = activity as MainActivity
-                mainActivity.runOnUiThread {
-                    // 受信したデータを画面に表示させる
-                    val wkCharas = Character.toChars(mmBuffer[0].toInt()) //文字コードから文字に変換
-                    val wkText = mainActivity.serialText.text.toString() + wkCharas[0]
-                    mainActivity.serialText.text = wkText
-                }
-           }
+            val wkCharas = Character.toChars(mmBuffer[0].toInt()) //文字コードから文字に変換
+            val readMsg = handler.obtainMessage()
+            readMsg.obj = wkCharas[0] // Char配列なので先頭文字取得
+            readMsg.sendToTarget()
         }
     }
 

@@ -6,8 +6,10 @@ import android.bluetooth.BluetoothDevice
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.os.Message
 import android.util.Log
-import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
@@ -21,7 +23,7 @@ class MainActivity : AppCompatActivity() {
     private var device: BluetoothDevice? = null
     private var BTConnectThred: BluetoothConnectThread? = null
 
-    lateinit var serialText : TextView
+    private lateinit var serialText : TextView
 
     @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,6 +42,14 @@ class MainActivity : AppCompatActivity() {
             startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT)
         }
         serialText = findViewById(R.id.serialText)
+
+        // Bluetooth通信スレッドの受信受け取り処理
+        val handler = object : Handler(Looper.getMainLooper()){
+            override fun handleMessage(msg: Message) {
+                super.handleMessage(msg)
+                serialText.text = serialText.text.toString() + msg.obj.toString()
+            }
+        }
 
         val checkBt = findViewById<Button>(R.id.checkBt)
         checkBt.setOnClickListener {
@@ -68,7 +78,7 @@ class MainActivity : AppCompatActivity() {
                 connectBt.isEnabled = false // 二重接続を防ぐためボタンを無効化
 
                 // Bluetooth接続を行うスレッドを開始
-                BTConnectThred = BluetoothConnectThread(it, this)
+                BTConnectThred = BluetoothConnectThread(it, handler)
                 BTConnectThred?.also {
                     it.start()
                 }
@@ -96,4 +106,5 @@ class MainActivity : AppCompatActivity() {
         BTConnectThred = null
         device = null
     }
+
 }

@@ -5,11 +5,11 @@ import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothSocket
 import android.util.Log
-import androidx.appcompat.app.AppCompatActivity
 import java.io.IOException
+import android.os.Handler
 
 @SuppressLint("MissingPermission")
-internal class BluetoothConnectThread(device: BluetoothDevice, activity: AppCompatActivity) : Thread() {
+internal class BluetoothConnectThread(device: BluetoothDevice, handler: Handler) : Thread() {
 
     val TAG = "BluetoothConnectThread"
 
@@ -19,7 +19,7 @@ internal class BluetoothConnectThread(device: BluetoothDevice, activity: AppComp
         device.createRfcommSocketToServiceRecord(device.uuids[0].uuid)
     }
 
-    private val activity = activity
+    private val handler = handler
 
     override fun run() {
         // デバイスの検出処理をキャンセルする(このタイミングでは接続済みのため）
@@ -28,7 +28,7 @@ internal class BluetoothConnectThread(device: BluetoothDevice, activity: AppComp
 
         // Bluetooth通信を行うスレッドを開始
         mmSocket!!.connect()
-        BTConnectedThread = BluetoothConnectedThread(mmSocket!!, activity)
+        BTConnectedThread = BluetoothConnectedThread(mmSocket!!, handler)
         BTConnectedThread.start()
 
     }
