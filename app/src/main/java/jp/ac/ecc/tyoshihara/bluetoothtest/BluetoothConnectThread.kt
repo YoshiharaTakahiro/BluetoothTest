@@ -48,4 +48,9 @@ internal class BluetoothConnectThread(device: BluetoothDevice, handler: Handler)
             Log.e(TAG, "Could not close the client socket", e)
         }
     }
+
+    // メッセージ送信処理
+    fun msgWrite(message : String){
+        BTConnectedThread.msgWrite(message)
+    }
 }

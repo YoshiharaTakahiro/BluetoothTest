@@ -5,4 +5,7 @@
     <string name="mainActivityTitle">Bluetooth Test</string>
     <string name="workText">Dummy Text</string>
     <string name="releaseButton">解除</string>
+    <string name="writeButton">送信</string>
+    <string name="writeHint">メッセージを入力してください</string>
+    <string name="clearButton">クリア</string>
 </resources>

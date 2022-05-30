@@ -11,6 +11,7 @@ import android.os.Looper
 import android.os.Message
 import android.util.Log
 import android.widget.Button
+import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 
@@ -96,6 +97,23 @@ class MainActivity : AppCompatActivity() {
 
             BTConnectThred = null
         }
+
+
+        val clearBt = findViewById<Button>(R.id.clearBt)
+        clearBt.setOnClickListener {
+            serialText.text = ""
+        }
+
+        val writeEt = findViewById<EditText>(R.id.writeEt)
+        val writeBt = findViewById<Button>(R.id.writeBt)
+        writeBt.setOnClickListener {
+            BTConnectThred?.also {
+                it.msgWrite(writeEt.text.toString())
+                writeEt.editableText.clear()
+            }
+        }
+
+
     }
 
     override fun onDestroy() {

@@ -12,7 +12,7 @@ internal class BluetoothConnectedThread(mmSocket: BluetoothSocket, handler: Hand
     val TAG = "BluetoothConnectedThread"
 
     private val mmInStream: InputStream = mmSocket.inputStream
-    // private val mmOutStream: OutputStream = mmSocket.outputStream
+    private val mmOutStream: OutputStream = mmSocket.outputStream
     private val mmBuffer: ByteArray = ByteArray(1024) // mmBuffer store for the stream
 
     private val handler = handler
@@ -29,6 +29,12 @@ internal class BluetoothConnectedThread(mmSocket: BluetoothSocket, handler: Hand
             readMsg.obj = wkCharas[0] // Char配列なので先頭文字取得
             readMsg.sendToTarget()
         }
+    }
+
+    // メッセージ送信処理
+    fun msgWrite(message : String){
+        val msgBytes = message.toByteArray()
+        mmOutStream.write(msgBytes)
     }
 
     // 通信中止メソッド
