@@ -26,12 +26,16 @@ internal class BluetoothConnectedThread(mmSocket: BluetoothSocket, handler: Hand
     override fun run() {
         // 中止命令が呼び出されるまで処理を継続させる
         while (running) {
-            mmInStream.read(mmBuffer)
 
-            val wkCharas = Character.toChars(mmBuffer[0].toInt()) //文字コードから文字に変換
-            val readMsg = handler.obtainMessage(SEND_MSG)
-            readMsg.obj = wkCharas[0] // Char配列なので先頭文字取得
-            readMsg.sendToTarget()
+            // バイトデータが存在しうる場合のみ読み込みを行う
+            if(mmInStream.available() != 0) {
+                mmInStream.read(mmBuffer)
+
+                val wkCharas = Character.toChars(mmBuffer[0].toInt()) //文字コードから文字に変換
+                val readMsg = handler.obtainMessage(SEND_MSG)
+                readMsg.obj = wkCharas[0] // Char配列なので先頭文字取得
+                readMsg.sendToTarget()
+            }
         }
     }
 

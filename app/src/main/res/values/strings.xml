@@ -1,12 +1,14 @@
 <resources>
-    <string name="app_name">BluetoothTest</string>
-    <string name="connectButton">接続</string>
-    <string name="pairCheckButton">ペアチェック</string>
+    <string name="app_name">Bluetooth Test</string>
+    <string name="connectButton">接続開始</string>
+    <string name="pairCheckButton">ペアリングチェック</string>
     <string name="mainActivityTitle">Bluetooth Test</string>
     <string name="workText">Dummy Text</string>
-    <string name="releaseButton">解除</string>
+    <string name="releaseButton">接続解除</string>
     <string name="writeButton">送信</string>
     <string name="writeHint">メッセージを入力してください</string>
-    <string name="clearButton">クリア</string>
-    <string name="searchButton">検索</string>
+    <string name="clearButton">テキストクリア</string>
+    <string name="searchButton">デバイス検索</string>
+    <string name="nonDevice">未接続：</string>
+    <string name="bluetoothListButton">bluetoothListButton</string>
 </resources>

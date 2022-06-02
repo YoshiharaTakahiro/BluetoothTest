@@ -7,16 +7,20 @@ import android.bluetooth.BluetoothSocket
 import android.util.Log
 import java.io.IOException
 import android.os.Handler
+import java.util.*
 
 @SuppressLint("MissingPermission")
 internal class BluetoothConnectThread(device: BluetoothDevice, handler: Handler) : Thread() {
 
     val TAG = "BluetoothConnectThread"
 
+    val SPP = "00001101-0000-1000-8000-00805F9B34FB"
+
     lateinit var BTConnectedThread : BluetoothConnectedThread
     private val mmSocket: BluetoothSocket? by lazy(LazyThreadSafetyMode.NONE) {
         // SPP(Serial Port Profile)のUUIDをセットしてシリアル通信を行う
-        device.createRfcommSocketToServiceRecord(device.uuids[0].uuid)
+        device.createRfcommSocketToServiceRecord(UUID.fromString(SPP))
+        //device.createRfcommSocketToServiceRecord(device.uuids[0].uuid)
     }
 
     private val handler = handler

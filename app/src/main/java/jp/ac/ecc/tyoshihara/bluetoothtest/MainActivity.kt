@@ -3,6 +3,7 @@ package jp.ac.ecc.tyoshihara.bluetoothtest
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.IntentFilter
 import androidx.appcompat.app.AppCompatActivity
@@ -15,6 +16,8 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class MainActivity : AppCompatActivity() {
 
@@ -27,12 +30,17 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var bluetoothReceiver : BluetoothDeviceReceiver
     private lateinit var serialText : TextView
+    private lateinit var deviceText : TextView
+    private lateinit var searchBt : Button
+
+    private var deviceArray : ArrayList<BluetoothDevice> = arrayListOf()
 
     @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        deviceText = findViewById(R.id.deviceText)
         serialText = findViewById(R.id.serialText)
 
         // メインスレッドのハンドラー生成
@@ -46,13 +54,22 @@ class MainActivity : AppCompatActivity() {
                         serialText.text = serialText.text.toString() + msg.obj.toString()
                     }
 
-                    // Bluetoothデバイス検知
-                    BluetoothDeviceReceiver.DEVICE_FOUND,
-                    BluetoothDeviceReceiver.DISCOVERY_START,
-                    BluetoothDeviceReceiver.DISCOVERY_END -> {
-                        serialText.text = serialText.text.toString() + msg.obj.toString() + "\n"
+                    // Bluetoothデバイス検知開始
+                    BluetoothDeviceReceiver.DISCOVERY_START -> {
+                        // serialText.text = serialText.text.toString() + msg.obj.toString() + "\n"
                     }
 
+                    // Bluetoothデバイス見つかった
+                    BluetoothDeviceReceiver.DEVICE_FOUND -> {
+                        val device = msg.obj as BluetoothDevice
+                        deviceArray.add(device)
+                    }
+
+                    // Bluetoothデバイス検知終了
+                    BluetoothDeviceReceiver.DISCOVERY_END -> {
+                        serialText.text = serialText.text.toString() + msg.obj.toString() + "\n"
+                        searchBt.isEnabled = true
+                    }
                 }
             }
         }
@@ -60,7 +77,7 @@ class MainActivity : AppCompatActivity() {
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
         if (bluetoothAdapter == null) {
             // デバイスがBluetoothに対応していない場合は以降の処理は行わない
-            Toast.makeText(this, "この端末はBluetoothに対応していません", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "この端末はBluetoothに対応していません", Toast.LENGTH_SHORT).show()
             return
         }
         bluetoothAdapter!!.cancelDiscovery() // デバイス検知はボタンきっかけでのみ行う
@@ -78,28 +95,34 @@ class MainActivity : AppCompatActivity() {
         registerReceiver(bluetoothReceiver, IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED))
 
         // Bluetoothデバイス検索
-        val searchBt = findViewById<Button>(R.id.searchBt)
+        searchBt = findViewById(R.id.searchBt)
         searchBt.setOnClickListener {
             bluetoothAdapter!!.startDiscovery()
-            Toast.makeText(this, "Bluetoothデバイスを検索します", Toast.LENGTH_SHORT).show()
+            deviceArray.clear() // デバイスリストクリア
+
+            searchBt.isEnabled = false
+            serialText.text = "デバイス検索中\n"
         }
 
         // ペアリングチェック
         val checkBt = findViewById<Button>(R.id.checkBt)
         checkBt.setOnClickListener {
 
+            Toast.makeText(this, "ペアリング済のデバイスを確認します", Toast.LENGTH_SHORT).show()
+            deviceArray.clear() // デバイスリストクリア
+
             // ペア済のBluetooth機器の情報取得
             val pairedDevices: Set<BluetoothDevice>? = bluetoothAdapter?.bondedDevices
             pairedDevices?.forEach { device ->
-                // ペア済のデバイスを設定
-                this.device = device
 
                 val deviceName = device.name // デバイス名
                 val deviceHardwareAddress = device.address // MACアドレス
                 Log.i(TAG, "deviceName:"+deviceName)
                 Log.i(TAG, "macAddress:"+deviceHardwareAddress)
                 Log.i(TAG, "uudi:"+device.uuids[0].uuid.toString())
-                Toast.makeText(this, "ペアリング済のデバイス("+device.name+")が見つかりました", Toast.LENGTH_SHORT).show()
+
+                // デバイスリストに追加
+                deviceArray.add(device)
             }
         }
 
@@ -109,7 +132,7 @@ class MainActivity : AppCompatActivity() {
 
             device?.also{
                 serialText.text = ""
-                Toast.makeText(this, "ペアリング済のデバイス("+it.name+")に接続しました", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, "デバイス("+it.name+")に接続しました", Toast.LENGTH_SHORT).show()
                 connectBt.isEnabled = false // 二重接続を防ぐためボタンを無効化
 
                 // Bluetooth接続を行うスレッドを開始
@@ -117,7 +140,7 @@ class MainActivity : AppCompatActivity() {
                 BTConnectThred?.also {
                     it.start()
                 }
-            }?: Toast.makeText(this, "ペアリングチェックを先にしてください。", Toast.LENGTH_SHORT).show()
+            }?: Toast.makeText(this, "デバイスを選択してください", Toast.LENGTH_SHORT).show()
         }
 
         // Bluetooth接続 解除処理
@@ -126,11 +149,47 @@ class MainActivity : AppCompatActivity() {
 
             BTConnectThred?.also {
                 it.release()
+                deviceText.text = getString(R.string.nonDevice)
                 connectBt.isEnabled = true // 接続ボタンを有効化に戻す
-                Toast.makeText(this, "デバイス(" + device?.name + ")の接続を終了します", Toast.LENGTH_LONG).show()
-            }?: Toast.makeText(this, "接続状態ではありません", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, "デバイス(" + device?.name + ")の接続を終了します", Toast.LENGTH_SHORT).show()
+            }?: Toast.makeText(this, "接続状態ではありません", Toast.LENGTH_SHORT).show()
 
             BTConnectThred = null
+            device = null
+        }
+
+        // Bluetoothデバイス一覧表示
+        val bluetoothFAB = findViewById<FloatingActionButton>(R.id.bluetoothListButton)
+        bluetoothFAB.setOnClickListener {
+
+            device?.also {
+                Toast.makeText(this, it.name + "に接続中です", Toast.LENGTH_SHORT).show()
+            }?:run{
+                val deviceNameArray : Array<String?> = arrayOfNulls(deviceArray.size)
+                for((index, device) in deviceArray.withIndex()){
+                    deviceNameArray.set(index, device.name)
+                }
+
+                if(deviceNameArray.size == 0){
+                    Toast.makeText(this, "Bluetooth機器がありません", Toast.LENGTH_SHORT).show()
+                    return@run
+                }
+
+                val builder = AlertDialog.Builder(this)
+                builder.setTitle("デバイスどれにする？")
+                    .setItems(deviceNameArray,
+                        DialogInterface.OnClickListener { dialog, which ->
+                            // The 'which' argument contains the index position
+                            // of the selected item
+                            device = deviceArray.get(which)
+                            device?.also {
+                                it.createBond()
+                                deviceText.text = it.name + "："
+                            }
+                            return@OnClickListener
+                        })
+                builder.create().show()
+            }
         }
 
 

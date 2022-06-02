@@ -41,42 +41,47 @@
         app:layout_constraintStart_toEndOf="@+id/searchBt"
         app:layout_constraintTop_toBottomOf="@+id/titleText" />
 
+    <TextView
+        android:id="@+id/deviceText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:text="@string/nonDevice"
+        android:textAlignment="viewEnd"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="@+id/connectBt"
+        app:layout_constraintEnd_toStartOf="@+id/connectBt"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/connectBt" />
+
     <Button
         android:id="@+id/connectBt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
         android:text="@string/connectButton"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/releaseBt"
         app:layout_constraintTop_toBottomOf="@+id/checkBt" />
 
     <Button
         android:id="@+id/releaseBt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
+        android:layout_marginEnd="4dp"
         android:text="@string/releaseButton"
         app:layout_constraintBaseline_toBaselineOf="@+id/connectBt"
-        app:layout_constraintStart_toEndOf="@+id/connectBt" />
-
-    <Button
-        android:id="@+id/clearBt"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:text="@string/clearButton"
-        app:layout_constraintBaseline_toBaselineOf="@+id/releaseBt"
         app:layout_constraintEnd_toEndOf="parent" />
 
     <ScrollView
+        android:id="@+id/scrollView"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/writeEt"
+        app:layout_constraintBottom_toTopOf="@+id/clearBt"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/connectBt">
@@ -85,9 +90,20 @@
             android:id="@+id/serialText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/workText"
             android:textSize="34sp" />
     </ScrollView>
+
+    <Button
+        android:id="@+id/clearBt"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:text="@string/clearButton"
+        app:layout_constraintBottom_toTopOf="@+id/writeEt"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <EditText
         android:id="@+id/writeEt"
@@ -115,5 +131,21 @@
         android:text="@string/writeButton"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/bluetoothListButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
+        android:clickable="true"
+        android:contentDescription="@string/bluetoothListButton"
+        app:backgroundTint="@color/bt_ic_launcher_background"
+        app:fabSize="auto"
+        app:layout_constraintBottom_toBottomOf="@+id/scrollView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:maxImageSize="72dp"
+        app:srcCompat="@mipmap/bt_ic_launcher_foreground"
+        android:focusable="true" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

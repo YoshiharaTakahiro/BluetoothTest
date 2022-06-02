@@ -32,10 +32,9 @@ class BluetoothDeviceReceiver(handler: Handler) : BroadcastReceiver() {
 
                 deviceName?.also {
                     val deviceMsg = handler.obtainMessage(DEVICE_FOUND)
-                    deviceMsg.obj = it
+                    deviceMsg.obj = device
                     deviceMsg.sendToTarget()
                 }
-                // Log.i(TAG, "S_macAddress:"+deviceHardwareAddress)
             }
 
             BluetoothAdapter.ACTION_DISCOVERY_STARTED -> {
