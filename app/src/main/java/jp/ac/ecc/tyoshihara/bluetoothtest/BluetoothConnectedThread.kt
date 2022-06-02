@@ -31,6 +31,7 @@ internal class BluetoothConnectedThread(mmSocket: BluetoothSocket, handler: Hand
             if(mmInStream.available() != 0) {
                 mmInStream.read(mmBuffer)
 
+                // デバイスからシリアル通信のデータを受け取ったらメインスレッドに内容を送る
                 val wkCharas = Character.toChars(mmBuffer[0].toInt()) //文字コードから文字に変換
                 val readMsg = handler.obtainMessage(SEND_MSG)
                 readMsg.obj = wkCharas[0] // Char配列なので先頭文字取得
@@ -41,6 +42,7 @@ internal class BluetoothConnectedThread(mmSocket: BluetoothSocket, handler: Hand
 
     // メッセージ送信処理
     fun msgWrite(message : String){
+        // デバイスにシリアル通信のデータを送信
         val msgBytes = message.toByteArray()
         mmOutStream.write(msgBytes)
     }

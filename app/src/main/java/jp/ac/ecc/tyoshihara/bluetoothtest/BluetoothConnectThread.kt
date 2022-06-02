@@ -1,7 +1,6 @@
 package jp.ac.ecc.tyoshihara.bluetoothtest
 
 import android.annotation.SuppressLint
-import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothSocket
 import android.util.Log
@@ -14,21 +13,19 @@ internal class BluetoothConnectThread(device: BluetoothDevice, handler: Handler)
 
     val TAG = "BluetoothConnectThread"
 
+    // SPP(Serial Port Profile)
     val SPP = "00001101-0000-1000-8000-00805F9B34FB"
 
     lateinit var BTConnectedThread : BluetoothConnectedThread
     private val mmSocket: BluetoothSocket? by lazy(LazyThreadSafetyMode.NONE) {
         // SPP(Serial Port Profile)のUUIDをセットしてシリアル通信を行う
         device.createRfcommSocketToServiceRecord(UUID.fromString(SPP))
-        //device.createRfcommSocketToServiceRecord(device.uuids[0].uuid)
+        // device.createRfcommSocketToServiceRecord(device.uuids[0].uuid) // デバイスから取得することも可能？？
     }
 
     private val handler = handler
 
     override fun run() {
-        // デバイスの検出処理をキャンセルする(このタイミングでは接続済みのため）
-        val bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
-        bluetoothAdapter?.cancelDiscovery()
 
         // Bluetooth通信を行うスレッドを開始
         mmSocket!!.connect()
