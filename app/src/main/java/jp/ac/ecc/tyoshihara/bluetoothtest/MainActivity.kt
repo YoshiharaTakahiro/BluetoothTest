@@ -3,6 +3,7 @@ package jp.ac.ecc.tyoshihara.bluetoothtest
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
+import android.bluetooth.BluetoothManager
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.IntentFilter
@@ -24,6 +25,7 @@ class MainActivity : AppCompatActivity() {
     val TAG = "MainActivity"
     val REQUEST_ENABLE_BT = 100
 
+    private lateinit var bluetoothManager : BluetoothManager
     private var bluetoothAdapter : BluetoothAdapter? = null
     private var device: BluetoothDevice? = null
     private var BTConnectThred: BluetoothConnectThread? = null
@@ -76,13 +78,8 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
-        if (bluetoothAdapter == null) {
-            // デバイスがBluetoothに対応していない場合は以降の処理は行わない
-            Toast.makeText(this, "この端末はBluetoothに対応していません", Toast.LENGTH_SHORT).show()
-            finish()
-            return
-        }
+        bluetoothManager = getSystemService(BluetoothManager::class.java)
+        bluetoothAdapter = bluetoothManager.adapter
         bluetoothAdapter!!.cancelDiscovery() // デバイス検知はボタンきっかけでのみ行う
 
         // Bluetooth有効化チェック
