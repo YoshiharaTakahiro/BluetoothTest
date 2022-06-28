@@ -148,4 +148,18 @@
         app:srcCompat="@mipmap/bt_ic_launcher_foreground"
         android:focusable="true" />
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/headsetButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:backgroundTint="#F8BBD0"
+        android:clickable="true"
+        android:contentDescription="@string/headset"
+        android:focusable="true"
+        android:src="@android:drawable/stat_sys_headset"
+        app:layout_constraintBottom_toBottomOf="@+id/bluetoothListButton"
+        app:layout_constraintEnd_toStartOf="@+id/bluetoothListButton"
+        app:layout_constraintTop_toTopOf="@+id/bluetoothListButton" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

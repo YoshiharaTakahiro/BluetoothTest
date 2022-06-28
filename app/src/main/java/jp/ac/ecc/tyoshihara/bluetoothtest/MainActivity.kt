@@ -1,9 +1,7 @@
 package jp.ac.ecc.tyoshihara.bluetoothtest
 
 import android.annotation.SuppressLint
-import android.bluetooth.BluetoothAdapter
-import android.bluetooth.BluetoothDevice
-import android.bluetooth.BluetoothManager
+import android.bluetooth.*
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.IntentFilter
@@ -94,6 +92,7 @@ class MainActivity : AppCompatActivity() {
         registerReceiver(bluetoothReceiver, IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_STARTED))
         registerReceiver(bluetoothReceiver, IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED))
 
+
         // Bluetoothデバイス検索
         searchBt = findViewById(R.id.searchBt)
         searchBt.setOnClickListener {
@@ -154,10 +153,13 @@ class MainActivity : AppCompatActivity() {
 
             BTConnectThred?.also {
                 it.release() // スレッド解除処理　呼び出し
-                deviceText.text = getString(R.string.nonDevice)
                 connectBt.isEnabled = true // 接続ボタンを有効化に戻す
                 Toast.makeText(this, "デバイス(" + device?.name + ")の接続を終了します", Toast.LENGTH_SHORT).show()
-            }?: Toast.makeText(this, "接続状態ではありません", Toast.LENGTH_SHORT).show() // nullの時
+            }
+
+            device?.also{
+                deviceText.text = getString(R.string.nonDevice)
+            }
 
             // スレッド、選択デバイスを初期化
             BTConnectThred = null
@@ -188,7 +190,7 @@ class MainActivity : AppCompatActivity() {
                 val builder = AlertDialog.Builder(this)
                 builder.setTitle("ペアリングを行うデバイスを選択してください")
                     .setItems(deviceNameArray,
-                        DialogInterface.OnClickListener { dialog, which ->
+                        DialogInterface.OnClickListener { _, which ->
                             // whichに選択したインデックス番号が格納されている
                             device = deviceArray.get(which)
                             device?.also {
@@ -201,6 +203,17 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        // ヘッドセット画面遷移
+        val headsetBt = findViewById<FloatingActionButton>(R.id.headsetButton)
+        headsetBt.setOnClickListener {
+            device?.also {
+                val intent = Intent(this, HeadsetActivity::class.java)
+                intent.putExtra("device", it)
+                startActivity(intent)
+            }?: run {
+                Toast.makeText(this, "Bluetooth機器選択してません", Toast.LENGTH_SHORT).show()
+            }
+        }
 
         // メッセージ表示領域クリア
         val clearBt = findViewById<Button>(R.id.clearBt)

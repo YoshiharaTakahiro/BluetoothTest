@@ -11,4 +11,17 @@
     <string name="searchButton">デバイス検索</string>
     <string name="nonDevice">未接続：</string>
     <string name="bluetoothListButton">bluetoothListButton</string>
+    <string name="headset">headset</string>
+    <string name="profileTitle">Profile Test</string>
+    <string name="deviceText">デバイス名：</string>
+    <string name="stateCheck">状態チェック</string>
+    <string name="connectText">接続開始</string>
+    <string name="disconnectText">接続解除</string>
+    <string name="a2dp_status_check">A2DP Status Check</string>
+    <string name="pausebutton">pauseButton</string>
+    <string name="stopbutton">stopButton</string>
+    <string name="playbutton">playButton</string>
+    <string name="headsetprofile">headsetProfile:</string>
+    <string name="a2dpprofile">a2dpProfile:</string>
+    <string name="nonCheck">未確認</string>
 </resources>

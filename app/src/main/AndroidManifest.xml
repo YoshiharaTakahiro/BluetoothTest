@@ -3,14 +3,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="jp.ac.ecc.tyoshihara.bluetoothtest">
 
+    <uses-permission android:name="android.permission.INTERNET"/>
+
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
-
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
-    <uses-feature android:name="android.hardware.bluetooth" android:required="true"/>
+    <uses-feature
+        android:name="android.hardware.bluetooth"
+        android:required="true" />
 
     <application
         android:allowBackup="true"
@@ -19,13 +22,6 @@
         android:roundIcon="@mipmap/bt_ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.BluetoothTest">
-
-        <receiver
-            android:name=".BluetoothDeviceReceiver"
-            android:enabled="true"
-            android:exported="true"
-            tools:ignore="Instantiatable" />
-
         <activity
             android:name=".MainActivity"
             android:exported="true">
@@ -35,6 +31,22 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".HeadsetActivity"
+            android:exported="false" />
+
+        <receiver
+            android:name=".BluetoothDeviceReceiver"
+            android:enabled="true"
+            android:exported="true"
+            tools:ignore="Instantiatable" />
+
+        <receiver
+            android:name=".HeadsetReceiver"
+            android:enabled="true"
+            android:exported="true"
+            tools:ignore="Instantiatable"></receiver>
     </application>
 
 </manifest>
